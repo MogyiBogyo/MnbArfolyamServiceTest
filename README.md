@@ -1,0 +1,2 @@
+# MnbArfolyamServiceTest
+MNBArfolyamServiceSoapImpl Service testing
