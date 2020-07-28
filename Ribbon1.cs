@@ -15,7 +15,7 @@ namespace mnbTask
     
     public partial class Ribbon1
     {
-
+        public string filepath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().CodeBase).Substring(6);
         public void makeExcellfile()
         {
             Excel.Worksheet activeWS = Globals.ThisAddIn.Application.ActiveSheet;
@@ -30,8 +30,13 @@ namespace mnbTask
            
         public void AccessConnection()
         {
+            
+
+            System.Windows.Forms.MessageBox.Show(filepath);
+
+
             OleDbConnection conn = new OleDbConnection();
-            conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\a2c57g\source\repos\mnbArfolyamTask\MnbGet.accdb";
+            conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source="+ filepath + "/MnbGet.accdb";
 
             String WindowsFelhasznNev = Environment.UserName;
             DateTime Idopont = DateTime.Now;
@@ -75,10 +80,10 @@ namespace mnbTask
 
         private void MnbGetter_Click(object sender, RibbonControlEventArgs e)
         {
-            makeExcellfile();
+            makeExcellfile(); //fejléc létrehozása
             MNBArfolyamServiceSoapClient client = new MNBArfolyamServiceSoapClient();
             GetExchangeRatesRequestBody getExchangeRatesRequestBody = new GetExchangeRatesRequestBody();
-            AccessConnection();
+            AccessConnection(); //dbconnection létrehozása + log beszúrása
 
 
             int row = 2;
@@ -179,8 +184,76 @@ namespace mnbTask
 
         }
 
-        private void button1_Click(object sender, RibbonControlEventArgs e)
+        //visszaadja a tábla adatait
+        private void MakeLog_Click(object sender, RibbonControlEventArgs e)
         {
+            OleDbConnection conn = new OleDbConnection();
+            List<string> ListboxItems = new List<string>();
+            OleDbDataReader reader = null;
+            conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source="+ filepath+ "/MnbGet.accdb";
+            conn.Open();
+            OleDbCommand cmd = new OleDbCommand("Select * from timeStamps", conn);
+
+            string name, time, reason;
+            int row=2, column=1;
+            Excel.Workbook activeWB = Globals.ThisAddIn.Application.ActiveWorkbook;
+            //Excel.Worksheet Logs = new Excel.Worksheet();
+            var xlSheets = activeWB.Sheets as Excel.Sheets;
+            var LogSheet = (Excel.Worksheet)xlSheets.Add(xlSheets[1], Type.Missing, Type.Missing, Type.Missing);
+            LogSheet.Name = "Logs";
+
+            ((Excel.Range)LogSheet.Cells[1, 1]).Value2 = "Username";
+            ((Excel.Range)LogSheet.Cells[1, 2]).Value2 = "Time";
+            ((Excel.Range)LogSheet.Cells[1, 3]).Value2 = "Reason";
+
+
+
+            reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                //ListboxItems.Add(reader[0].ToString() + "," + reader[1].ToString() + ","+ reader[2].ToString());
+                //System.Windows.Forms.MessageBox.Show(reader[0].ToString() + "," + reader[1].ToString() + "," + reader[2].ToString());
+
+                ((Excel.Range)LogSheet.Cells[row, column]).Value2 = reader[0];
+                ((Excel.Range)LogSheet.Cells[row, column + 1]).Value2 = (DateTime)reader[1];
+                ((Excel.Range)LogSheet.Cells[row, column + 2]).Value2 = reader[2];
+                row++;
+            }
+            
+            conn.Close();
+
+        }
+
+        private void logSave_Click(object sender, RibbonControlEventArgs e)
+        {
+            OleDbConnection conn = new OleDbConnection();
+            conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + filepath + "/MnbGet.accdb";
+            conn.Open();
+
+
+            Excel.Worksheet currentSheet = Globals.ThisAddIn.Application.Worksheets["Logs"];
+            int row=2, col=1;
+
+            var WindowsFelhasznNev = ((Excel.Range)currentSheet.Cells[row, 1]).Value2;
+            var Idopont = ((Excel.Range)currentSheet.Cells[row, 2]).Value2;
+            var Reason = ((Excel.Range)currentSheet.Cells[row, 3]).Value2;
+            while (WindowsFelhasznNev != "")
+            {
+                if(Reason != "" ){
+                    OleDbCommand cmd = new OleDbCommand("Update timeStamps (Reason) SET Reason = @Reason WHERE WindowsFelhasznNev = @WindowsFelhasznNev AND Idopont = @Idopont ", conn);
+                    cmd.Parameters.Add("@WindowsFelhasznNev", OleDbType.VarChar).Value = WindowsFelhasznNev;
+                    cmd.Parameters.Add("@Idopont", OleDbType.Date).Value = Idopont;
+                    cmd.Parameters.Add("@Reason", OleDbType.Date).Value = Reason;
+                }
+                row++;
+            }
+
+           
+            
+
+            //ciklus 2. sortol, van-e valami az username-ben
+            //while username !empty
+            //reason !ures akkor update sql
 
         }
     }

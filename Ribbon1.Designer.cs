@@ -39,6 +39,7 @@
             this.MnbGetter = this.Factory.CreateRibbonButton();
             this.MakeLog = this.Factory.CreateRibbonButton();
             this.startLog = this.Factory.CreateRibbonButton();
+            this.logSave = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
             this.SuspendLayout();
@@ -54,6 +55,7 @@
             // 
             this.group1.Items.Add(this.MnbGetter);
             this.group1.Items.Add(this.MakeLog);
+            this.group1.Items.Add(this.logSave);
             this.group1.Label = "Vécsei Ágnes";
             this.group1.Name = "group1";
             // 
@@ -67,7 +69,18 @@
             // 
             this.MakeLog.Label = "Log";
             this.MakeLog.Name = "MakeLog";
-
+            this.MakeLog.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.MakeLog_Click);
+            // 
+            // startLog
+            // 
+            this.startLog.Label = "";
+            this.startLog.Name = "startLog";
+            // 
+            // logSave
+            // 
+            this.logSave.Label = "Log save";
+            this.logSave.Name = "logSave";
+            this.logSave.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.logSave_Click);
             // 
             // Ribbon1
             // 
@@ -90,6 +103,7 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonButton MnbGetter;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton MakeLog;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton startLog;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton logSave;
     }
 
     partial class ThisRibbonCollection
