@@ -56,7 +56,7 @@
             // 
             // MnbGetter
             // 
-            this.MnbGetter.Label = "Mnb gomb";
+            this.MnbGetter.Label = "MNB Árfolyamlekérő";
             this.MnbGetter.Name = "MnbGetter";
             this.MnbGetter.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.MnbGetter_Click);
             // 

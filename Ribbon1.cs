@@ -14,10 +14,13 @@ namespace mnbTask
     
     public partial class Ribbon1
     {
+
         public void makeExcellfile()
         {
             Excel.Worksheet activeWS = Globals.ThisAddIn.Application.ActiveSheet;
             Excel.Range actCell = Globals.ThisAddIn.Application.ActiveCell;
+            activeWS.Columns.AutoFit();
+
             ((Excel.Range)activeWS.Cells[1, 1]).Value2 = "Date";
             ((Excel.Range)activeWS.Cells[1, 2]).Value2 = "Currencie";
             ((Excel.Range)activeWS.Cells[1, 3]).Value2 = "Unit";
@@ -53,28 +56,41 @@ namespace mnbTask
             GetExchangeRatesRequestBody getExchangeRatesRequestBody = new GetExchangeRatesRequestBody();
 
 
-            
+
 
             //Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
             //Microsoft.Office.Interop.Excel.Workbook workbook = new Excel.Workbook();
             //Microsoft.Office.Interop.Excel.Worksheet worksheet = workbook.ActiveSheet;
 
 
-
+            int row = 2;
+            int column = 1;
             int year = 2020;
             int month = 4;
             int day = 1;
             bool exit = false;
+            bool first = true;
+
             while (!exit)
             {
-                //DateTime date = new DateTime(year, month, day);
-                //var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
-                //var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
-                //getExchangeRatesRequestBody.startDate = firstDayOfMonth.ToString();
-                //getExchangeRatesRequestBody.endDate = lastDayOfMonth.ToString();
+                DateTime date = new DateTime(year, month, day);
+                var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
+                var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
 
-                getExchangeRatesRequestBody.startDate = "2020-01-12";
-                getExchangeRatesRequestBody.endDate = "2020-01-15";
+                if (first)
+                {
+                    getExchangeRatesRequestBody.startDate = "2020-04-01";
+                    getExchangeRatesRequestBody.endDate = "2020-04-01";
+                    first = false;
+                }
+                else
+                {
+                    getExchangeRatesRequestBody.startDate = firstDayOfMonth.ToString();
+                    getExchangeRatesRequestBody.endDate = lastDayOfMonth.ToString();
+                }
+
+                //getExchangeRatesRequestBody.startDate = "2020-01-12";
+                //getExchangeRatesRequestBody.endDate = "2020-01-15";
                 GetCurrenciesRequestBody currbody = new GetCurrenciesRequestBody();
                 var currencies = client.GetCurrencies(currbody);
 
@@ -95,43 +111,56 @@ namespace mnbTask
 
                 XmlDocument myXml = new XmlDocument();
                 myXml.LoadXml(ExchangeswithDate.GetExchangeRatesResult);
+                
 
-                foreach (XmlNode item in myXml.GetElementsByTagName("Day"))
+                foreach (XmlElement item in myXml.GetElementsByTagName("Day"))
                 {
-                    string xmlCurr = item["curr"].InnerText;
-                    string xmlUnit = item["unit"].InnerText;
+                    XmlNodeList rates = item.GetElementsByTagName("Rate");
+                   
                     
-                    foreach (XmlAttribute ka in item.Attributes)
+                    foreach (XmlElement rateElement in rates)
                     {
-                        int i = 1;
+
+                        //string joez = rateElement.GetAttribute("curr");
+                        string unit = rateElement.GetAttribute("unit");
+                        string value = rateElement.InnerText;
+                        ((Excel.Range)activeWS.Cells[row, column]).Value2 = item.GetAttribute("date");
+                        
+                        ((Excel.Range)activeWS.Cells[row, column + 1]).Value2 = rateElement.GetAttribute("curr");
+                        ((Excel.Range)activeWS.Cells[row, column + 2]).Value2 = int.Parse(rateElement.GetAttribute("unit"));
+                        ((Excel.Range)activeWS.Cells[row, column + 3]).Value2 = float.Parse(rateElement.InnerText);
+                        //táblázat feltöltése
+                        row++;
+
                     }
                 }
 
-                System.Windows.Forms.MessageBox.Show(ExchangeswithDate.GetExchangeRatesResult);
+                //System.Windows.Forms.MessageBox.Show(ExchangeswithDate.GetExchangeRatesResult);
 
                 //Dátumcsökkentés
-                //if (year <= 2015 && month == 1 && day == 1)
-                //{
-                //    exit = true;
-                //}
-                //else if (month == 1)
-                //{
-                //    year--;
-                //    month = 12;
+                if (year <= 2015 && month == 1 && day == 1)
+                {
+                    exit = true;
+                }
+                else if (month == 1)
+                {
+                    year--;
+                    month = 12;
 
-                //}
-                //else
-                //{
-                //    month--;
-                //}
+                }
+                else
+                {
+                    month--;
+                }
 
 
 
-                exit = true;
+                //exit = true;
 
             }
-           
 
+            Excel.Worksheet activeWSforResize = Globals.ThisAddIn.Application.ActiveSheet;
+            //activeWSforResize.Columns.AutoFit();
             client.Close();
 
         }
