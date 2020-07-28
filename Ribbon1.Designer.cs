@@ -38,8 +38,8 @@
             this.group1 = this.Factory.CreateRibbonGroup();
             this.MnbGetter = this.Factory.CreateRibbonButton();
             this.MakeLog = this.Factory.CreateRibbonButton();
-            this.startLog = this.Factory.CreateRibbonButton();
             this.logSave = this.Factory.CreateRibbonButton();
+            this.startLog = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
             this.SuspendLayout();
@@ -71,16 +71,16 @@
             this.MakeLog.Name = "MakeLog";
             this.MakeLog.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.MakeLog_Click);
             // 
-            // startLog
-            // 
-            this.startLog.Label = "";
-            this.startLog.Name = "startLog";
-            // 
             // logSave
             // 
             this.logSave.Label = "Log save";
             this.logSave.Name = "logSave";
             this.logSave.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.logSave_Click);
+            // 
+            // startLog
+            // 
+            this.startLog.Label = "";
+            this.startLog.Name = "startLog";
             // 
             // Ribbon1
             // 

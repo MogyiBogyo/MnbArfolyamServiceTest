@@ -30,11 +30,7 @@ namespace mnbTask
            
         public void AccessConnection()
         {
-            
-
-            System.Windows.Forms.MessageBox.Show(filepath);
-
-
+           
             OleDbConnection conn = new OleDbConnection();
             conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source="+ filepath + "/MnbGet.accdb";
 
@@ -58,7 +54,7 @@ namespace mnbTask
                 try
                 {
                     cmd.ExecuteNonQuery();
-                    System.Windows.Forms.MessageBox.Show("Data Added");
+                    //System.Windows.Forms.MessageBox.Show("Data Added");
                     conn.Close();
                 }
                 catch (OleDbException ex)
@@ -197,7 +193,6 @@ namespace mnbTask
             string name, time, reason;
             int row=2, column=1;
             Excel.Workbook activeWB = Globals.ThisAddIn.Application.ActiveWorkbook;
-            //Excel.Worksheet Logs = new Excel.Worksheet();
             var xlSheets = activeWB.Sheets as Excel.Sheets;
             var LogSheet = (Excel.Worksheet)xlSheets.Add(xlSheets[1], Type.Missing, Type.Missing, Type.Missing);
             LogSheet.Name = "Logs";
@@ -237,19 +232,33 @@ namespace mnbTask
             var WindowsFelhasznNev = ((Excel.Range)currentSheet.Cells[row, 1]).Value2;
             var Idopont = ((Excel.Range)currentSheet.Cells[row, 2]).Value2;
             var Reason = ((Excel.Range)currentSheet.Cells[row, 3]).Value2;
-            while (WindowsFelhasznNev != "")
+
+            bool exit = false;
+            /*
+            while (WindowsFelhasznNev != "" && !exit)
             {
-                if(Reason != "" ){
-                    OleDbCommand cmd = new OleDbCommand("Update timeStamps (Reason) SET Reason = @Reason WHERE WindowsFelhasznNev = @WindowsFelhasznNev AND Idopont = @Idopont ", conn);
-                    cmd.Parameters.Add("@WindowsFelhasznNev", OleDbType.VarChar).Value = WindowsFelhasznNev;
-                    cmd.Parameters.Add("@Idopont", OleDbType.Date).Value = Idopont;
-                    cmd.Parameters.Add("@Reason", OleDbType.Date).Value = Reason;
+                WindowsFelhasznNev = ((Excel.Range)currentSheet.Cells[row, 1]).Value2;
+                Idopont = ((Excel.Range)currentSheet.Cells[row, 2]).Value2;
+                Reason = ((Excel.Range)currentSheet.Cells[row, 3]).Value2;
+                if (Reason != "" ){
+                    try
+                    {
+                        OleDbCommand cmd = new OleDbCommand("Update timeStamps (Reason,WindowsFelhasznNev,Idopont) SET Reason = @Reason, WindowsFelhasznNev = @WindowsFelhasznNev, Idopont=@Idopont  WHERE WindowsFelhasznNev = @WindowsFelhasznNev AND Idopont = @Idopont ", conn);
+                        cmd.Parameters.Add("@WindowsFelhasznNev", OleDbType.VarChar).Value = WindowsFelhasznNev;
+                        cmd.Parameters.Add("@Idopont", OleDbType.Date).Value = Idopont;
+                        cmd.Parameters.Add("@Reason", OleDbType.LongVarChar).Value = Reason;
+                        cmd.ExecuteNonQuery();
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Windows.Forms.MessageBox.Show(ex.Message);
+
+                    }
+                   
                 }
                 row++;
-            }
-
-           
-            
+               
+            }*/
 
             //ciklus 2. sortol, van-e valami az username-ben
             //while username !empty
