@@ -7,6 +7,7 @@ using mnbTask.MnbServiceReference;
 using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
 using System.Xml;
+using System.Data.OleDb;
 
 namespace mnbTask
 {
@@ -19,23 +20,54 @@ namespace mnbTask
         {
             Excel.Worksheet activeWS = Globals.ThisAddIn.Application.ActiveSheet;
             Excel.Range actCell = Globals.ThisAddIn.Application.ActiveCell;
-            activeWS.Columns.AutoFit();
+
 
             ((Excel.Range)activeWS.Cells[1, 1]).Value2 = "Date";
-            ((Excel.Range)activeWS.Cells[1, 2]).Value2 = "Currencie";
+            ((Excel.Range)activeWS.Cells[1, 2]).Value2 = "Currency";
             ((Excel.Range)activeWS.Cells[1, 3]).Value2 = "Unit";
             ((Excel.Range)activeWS.Cells[1, 4]).Value2 = "Value";
-            //int endRow = 5;
-            //int endCol = 6;
-
-            //for (int idxRow = 1; idxRow <= endRow; idxRow++)
-            //{
-            //    for (int idxCol = 1; idxCol <= endCol; idxCol++)
-            //    {
-            //        ((Excel.Range)activeWS.Cells[idxRow, idxCol]).Value2 = "Kilroy wuz here";
-            //    }
-            //}
         }
+           
+        public void AccessConnection()
+        {
+            OleDbConnection conn = new OleDbConnection();
+            conn.ConnectionString = @"Provider=Microsoft.ACE.OLEDB.12.0;Data Source=C:\Users\a2c57g\source\repos\mnbArfolyamTask\MnbGet.accdb";
+
+            String WindowsFelhasznNev = Environment.UserName;
+            DateTime Idopont = DateTime.Now;
+            String Indoklas = "";
+
+
+            OleDbCommand cmd = new OleDbCommand("INSERT into timeStamps (WindowsFelhasznNev, Idopont) Values(@WindowsFelhasznNev, @Idopont)");
+            cmd.Connection = conn;
+
+            conn.Open();
+
+            if (conn.State == System.Data.ConnectionState.Open)
+            {
+                cmd.Parameters.Add("@WindowsFelhasznNev", OleDbType.VarChar).Value = WindowsFelhasznNev;
+                cmd.Parameters.Add("@Idopont", OleDbType.Date).Value = Idopont;
+
+                //cmd.Parameters.Add("@Indoklas", OleDbType.LongVarChar).Value = null;
+
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                    System.Windows.Forms.MessageBox.Show("Data Added");
+                    conn.Close();
+                }
+                catch (OleDbException ex)
+                {
+                    System.Windows.Forms.MessageBox.Show(ex.Message);
+                    conn.Close();
+                }
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("Connection Failed");
+            }
+        }
+
         private void Ribbon1_Load(object sender, RibbonUIEventArgs e)
         {
 
@@ -43,24 +75,10 @@ namespace mnbTask
 
         private void MnbGetter_Click(object sender, RibbonControlEventArgs e)
         {
-
             makeExcellfile();
-            
-
             MNBArfolyamServiceSoapClient client = new MNBArfolyamServiceSoapClient();
-            
-        
-            //GetCurrentExchangeRatesRequestBody myCurrentexchanges = new GetCurrentExchangeRatesRequestBody();
-    
-
             GetExchangeRatesRequestBody getExchangeRatesRequestBody = new GetExchangeRatesRequestBody();
-
-
-
-
-            //Microsoft.Office.Interop.Excel.Application excel = new Microsoft.Office.Interop.Excel.Application();
-            //Microsoft.Office.Interop.Excel.Workbook workbook = new Excel.Workbook();
-            //Microsoft.Office.Interop.Excel.Worksheet worksheet = workbook.ActiveSheet;
+            AccessConnection();
 
 
             int row = 2;
@@ -77,20 +95,20 @@ namespace mnbTask
                 var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
                 var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
 
-                if (first)
-                {
-                    getExchangeRatesRequestBody.startDate = "2020-04-01";
-                    getExchangeRatesRequestBody.endDate = "2020-04-01";
-                    first = false;
-                }
-                else
-                {
-                    getExchangeRatesRequestBody.startDate = firstDayOfMonth.ToString();
-                    getExchangeRatesRequestBody.endDate = lastDayOfMonth.ToString();
-                }
+                //if (first)
+                //{
+                //    getExchangeRatesRequestBody.startDate = "2020-04-01";
+                //    getExchangeRatesRequestBody.endDate = "2020-04-01";
+                //    first = false;
+                //}
+                //else
+                //{
+                //    getExchangeRatesRequestBody.startDate = firstDayOfMonth.ToString();
+                //    getExchangeRatesRequestBody.endDate = lastDayOfMonth.ToString();
+                //}
 
-                //getExchangeRatesRequestBody.startDate = "2020-01-12";
-                //getExchangeRatesRequestBody.endDate = "2020-01-15";
+                getExchangeRatesRequestBody.startDate = "2020-01-12";
+                getExchangeRatesRequestBody.endDate = "2020-01-15";
                 GetCurrenciesRequestBody currbody = new GetCurrenciesRequestBody();
                 var currencies = client.GetCurrencies(currbody);
 
@@ -121,7 +139,7 @@ namespace mnbTask
                     foreach (XmlElement rateElement in rates)
                     {
 
-                        //string joez = rateElement.GetAttribute("curr");
+                        //string currs = rateElement.GetAttribute("curr");
                         string unit = rateElement.GetAttribute("unit");
                         string value = rateElement.InnerText;
                         ((Excel.Range)activeWS.Cells[row, column]).Value2 = item.GetAttribute("date");
@@ -138,30 +156,31 @@ namespace mnbTask
                 //System.Windows.Forms.MessageBox.Show(ExchangeswithDate.GetExchangeRatesResult);
 
                 //Dátumcsökkentés
-                if (year <= 2015 && month == 1 && day == 1)
-                {
-                    exit = true;
-                }
-                else if (month == 1)
-                {
-                    year--;
-                    month = 12;
+                //if (year <= 2015 && month == 1 && day == 1)
+                //{
+                //    exit = true;
+                //}
+                //else if (month == 1)
+                //{
+                //    year--;
+                //    month = 12;
 
-                }
-                else
-                {
-                    month--;
-                }
-
-
-
-                //exit = true;
-
+                //}
+                //else
+                //{
+                //    month--;
+                //}
+                exit = true;
             }
 
             Excel.Worksheet activeWSforResize = Globals.ThisAddIn.Application.ActiveSheet;
-            //activeWSforResize.Columns.AutoFit();
+            activeWSforResize.Columns.AutoFit();
             client.Close();
+
+        }
+
+        private void button1_Click(object sender, RibbonControlEventArgs e)
+        {
 
         }
     }

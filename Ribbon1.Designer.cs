@@ -37,6 +37,8 @@
             this.tab1 = this.Factory.CreateRibbonTab();
             this.group1 = this.Factory.CreateRibbonGroup();
             this.MnbGetter = this.Factory.CreateRibbonButton();
+            this.MakeLog = this.Factory.CreateRibbonButton();
+            this.startLog = this.Factory.CreateRibbonButton();
             this.tab1.SuspendLayout();
             this.group1.SuspendLayout();
             this.SuspendLayout();
@@ -51,14 +53,21 @@
             // group1
             // 
             this.group1.Items.Add(this.MnbGetter);
-            this.group1.Label = "group1";
+            this.group1.Items.Add(this.MakeLog);
+            this.group1.Label = "Vécsei Ágnes";
             this.group1.Name = "group1";
             // 
             // MnbGetter
             // 
-            this.MnbGetter.Label = "MNB Árfolyamlekérő";
+            this.MnbGetter.Label = "MNB Adatlekérés";
             this.MnbGetter.Name = "MnbGetter";
             this.MnbGetter.Click += new Microsoft.Office.Tools.Ribbon.RibbonControlEventHandler(this.MnbGetter_Click);
+            // 
+            // MakeLog
+            // 
+            this.MakeLog.Label = "Log";
+            this.MakeLog.Name = "MakeLog";
+
             // 
             // Ribbon1
             // 
@@ -79,6 +88,8 @@
         internal Microsoft.Office.Tools.Ribbon.RibbonTab tab1;
         internal Microsoft.Office.Tools.Ribbon.RibbonGroup group1;
         internal Microsoft.Office.Tools.Ribbon.RibbonButton MnbGetter;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton MakeLog;
+        internal Microsoft.Office.Tools.Ribbon.RibbonButton startLog;
     }
 
     partial class ThisRibbonCollection
