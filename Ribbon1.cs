@@ -210,11 +210,11 @@ namespace mnbTask
                 //System.Windows.Forms.MessageBox.Show(reader[0].ToString() + "," + reader[1].ToString() + "," + reader[2].ToString());
 
                 ((Excel.Range)LogSheet.Cells[row, column]).Value2 = reader[0];
-                ((Excel.Range)LogSheet.Cells[row, column + 1]).Value2 = (DateTime)reader[1];
+                ((Excel.Range)LogSheet.Cells[row, column + 1]).Value2 = reader[1].ToString();
                 ((Excel.Range)LogSheet.Cells[row, column + 2]).Value2 = reader[2];
                 row++;
             }
-            
+            LogSheet.Columns.AutoFit();
             conn.Close();
 
         }
@@ -234,7 +234,7 @@ namespace mnbTask
             var Reason = ((Excel.Range)currentSheet.Cells[row, 3]).Value2;
 
             bool exit = false;
-            /*
+            
             while (WindowsFelhasznNev != "" )
             {
                 WindowsFelhasznNev = ((Excel.Range)currentSheet.Cells[row, 1]).Value2;
@@ -243,7 +243,7 @@ namespace mnbTask
                 if (Reason != "" ){
                     try
                     {
-                        OleDbCommand cmd = new OleDbCommand("Update timeStamps (Reason, WindowsFelhasznNev, Idopont) SET Reason = @Reason, WindowsFelhasznNev = @WindowsFelhasznNev, Idopont=@Idopont  WHERE WindowsFelhasznNev = @WindowsFelhasznNev AND Idopont = @Idopont ", conn);
+                        OleDbCommand cmd = new OleDbCommand("Update timeStamps ('Reason', 'WindowsFelhasznNev', 'Idopont') SET Reason = @Reason, WindowsFelhasznNev = @WindowsFelhasznNev, Idopont=@Idopont  WHERE WindowsFelhasznNev = @WindowsFelhasznNev AND Idopont = @Idopont ", conn);
                         cmd.Parameters.Add("@WindowsFelhasznNev", OleDbType.VarChar).Value = WindowsFelhasznNev;
                         cmd.Parameters.Add("@Idopont", OleDbType.Date).Value = Idopont;
                         cmd.Parameters.Add("@Reason", OleDbType.LongVarChar).Value = Reason;
@@ -259,7 +259,7 @@ namespace mnbTask
                 row++;
                
             }
-            */
+            
             
 
         }
