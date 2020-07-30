@@ -96,20 +96,20 @@ namespace mnbTask
                 var firstDayOfMonth = new DateTime(date.Year, date.Month, 1);
                 var lastDayOfMonth = new DateTime(date.Year, date.Month, DateTime.DaysInMonth(date.Year, date.Month));
 
-                //if (first)
-                //{
-                //    getExchangeRatesRequestBody.startDate = "2020-04-01";
-                //    getExchangeRatesRequestBody.endDate = "2020-04-01";
-                //    first = false;
-                //}
-                //else
-                //{
-                //    getExchangeRatesRequestBody.startDate = firstDayOfMonth.ToString();
-                //    getExchangeRatesRequestBody.endDate = lastDayOfMonth.ToString();
-                //}
+                if (first)
+                {
+                    getExchangeRatesRequestBody.startDate = "2020-04-01";
+                    getExchangeRatesRequestBody.endDate = "2020-04-01";
+                    first = false;
+                }
+                else
+                {
+                    getExchangeRatesRequestBody.startDate = firstDayOfMonth.ToString();
+                    getExchangeRatesRequestBody.endDate = lastDayOfMonth.ToString();
+                }
 
-                getExchangeRatesRequestBody.startDate = "2020-01-12";
-                getExchangeRatesRequestBody.endDate = "2020-01-15";
+                //getExchangeRatesRequestBody.startDate = "2020-01-12";
+                //getExchangeRatesRequestBody.endDate = "2020-01-15";
                 GetCurrenciesRequestBody currbody = new GetCurrenciesRequestBody();
                 var currencies = client.GetCurrencies(currbody);
 
@@ -157,21 +157,21 @@ namespace mnbTask
                 //System.Windows.Forms.MessageBox.Show(ExchangeswithDate.GetExchangeRatesResult);
 
                 //Dátumcsökkentés
-                //if (year <= 2015 && month == 1 && day == 1)
-                //{
-                //    exit = true;
-                //}
-                //else if (month == 1)
-                //{
-                //    year--;
-                //    month = 12;
+                if (year <= 2015 && month == 1 && day == 1)
+                {
+                    exit = true;
+                }
+                else if (month == 1)
+                {
+                    year--;
+                    month = 12;
 
-                //}
-                //else
-                //{
-                //    month--;
-                //}
-                exit = true;
+                }
+                else
+                {
+                    month--;
+                }
+                //exit = true;
             }
 
             Excel.Worksheet activeWSforResize = Globals.ThisAddIn.Application.ActiveSheet;
@@ -235,7 +235,7 @@ namespace mnbTask
 
             bool exit = false;
             /*
-            while (WindowsFelhasznNev != "" && !exit)
+            while (WindowsFelhasznNev != "" )
             {
                 WindowsFelhasznNev = ((Excel.Range)currentSheet.Cells[row, 1]).Value2;
                 Idopont = ((Excel.Range)currentSheet.Cells[row, 2]).Value2;
@@ -243,7 +243,7 @@ namespace mnbTask
                 if (Reason != "" ){
                     try
                     {
-                        OleDbCommand cmd = new OleDbCommand("Update timeStamps (Reason,WindowsFelhasznNev,Idopont) SET Reason = @Reason, WindowsFelhasznNev = @WindowsFelhasznNev, Idopont=@Idopont  WHERE WindowsFelhasznNev = @WindowsFelhasznNev AND Idopont = @Idopont ", conn);
+                        OleDbCommand cmd = new OleDbCommand("Update timeStamps (Reason, WindowsFelhasznNev, Idopont) SET Reason = @Reason, WindowsFelhasznNev = @WindowsFelhasznNev, Idopont=@Idopont  WHERE WindowsFelhasznNev = @WindowsFelhasznNev AND Idopont = @Idopont ", conn);
                         cmd.Parameters.Add("@WindowsFelhasznNev", OleDbType.VarChar).Value = WindowsFelhasznNev;
                         cmd.Parameters.Add("@Idopont", OleDbType.Date).Value = Idopont;
                         cmd.Parameters.Add("@Reason", OleDbType.LongVarChar).Value = Reason;
@@ -258,11 +258,9 @@ namespace mnbTask
                 }
                 row++;
                
-            }*/
-
-            //ciklus 2. sortol, van-e valami az username-ben
-            //while username !empty
-            //reason !ures akkor update sql
+            }
+            */
+            
 
         }
     }
