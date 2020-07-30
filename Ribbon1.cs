@@ -195,7 +195,30 @@ namespace mnbTask
             Excel.Workbook activeWB = Globals.ThisAddIn.Application.ActiveWorkbook;
             var xlSheets = activeWB.Sheets as Excel.Sheets;
             var LogSheet = (Excel.Worksheet)xlSheets.Add(xlSheets[1], Type.Missing, Type.Missing, Type.Missing);
-            LogSheet.Name = "Logs";
+
+            bool found = false;
+           
+            foreach (Excel.Worksheet sheet in activeWB.Sheets)
+            {
+               
+                if (sheet.Name == "Logs")
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+            {
+                // Reference it by name
+                LogSheet = activeWB.Sheets["Logs"];
+            }
+            else
+            {
+                // Create it
+                LogSheet.Name = "Logs";
+            }
+
 
             ((Excel.Range)LogSheet.Cells[1, 1]).Value2 = "Username";
             ((Excel.Range)LogSheet.Cells[1, 2]).Value2 = "Time";
