@@ -258,23 +258,24 @@ namespace mnbTask
 
             bool exit = false;
             
-            while (WindowsFelhasznNev != "" )
+            while (WindowsFelhasznNev != "" && !exit)
             {
                 WindowsFelhasznNev = ((Excel.Range)currentSheet.Cells[row, 1]).Value2;
                 Idopont = ((Excel.Range)currentSheet.Cells[row, 2]).Value2;
                 Reason = ((Excel.Range)currentSheet.Cells[row, 3]).Value2;
-                if (Reason != "" ){
+                if (Reason !=  null ){
                     try
                     {
-                        OleDbCommand cmd = new OleDbCommand("Update timeStamps ('Reason', 'WindowsFelhasznNev', 'Idopont') SET Reason = @Reason, WindowsFelhasznNev = @WindowsFelhasznNev, Idopont=@Idopont  WHERE WindowsFelhasznNev = @WindowsFelhasznNev AND Idopont = @Idopont ", conn);
+                        OleDbCommand cmd = new OleDbCommand("UPDATE timeStamps SET Reason = @Reason  WHERE WindowsFelhasznNev = @WindowsFelhasznNev", conn);
                         cmd.Parameters.Add("@WindowsFelhasznNev", OleDbType.VarChar).Value = WindowsFelhasznNev;
-                        cmd.Parameters.Add("@Idopont", OleDbType.Date).Value = Idopont;
+                        //cmd.Parameters.Add("@Idopont", OleDbType.VarChar).Value = Idopont;
                         cmd.Parameters.Add("@Reason", OleDbType.LongVarChar).Value = Reason;
                         cmd.ExecuteNonQuery();
                     }
                     catch (Exception ex)
                     {
                         System.Windows.Forms.MessageBox.Show(ex.Message);
+                        exit = true;
 
                     }
                    
